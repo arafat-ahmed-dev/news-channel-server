@@ -1,7 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import validator from 'validator';
-import validator from 'validator';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 const userSchema = new Schema(
   {
@@ -65,7 +66,6 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Password is required'],
       minlength: [8, 'Password must be at least 8 characters'],
-      select: false, // Hide password by default in queries
     },
     status: {
       type: String,
@@ -120,7 +120,7 @@ const userSchema = new Schema(
     timestamps: true,
     toJSON: {
       virtuals: true,
-      transform: function (ret) {
+      transform: function (_doc, ret) {
         delete ret.password;
         delete ret.refreshToken;
         delete ret.forgetPasswordToken;
@@ -138,15 +138,17 @@ const userSchema = new Schema(
 userSchema.index({ email: 1, isEmailVerified: 1 });
 userSchema.index({ email: 1, username: 1 });
 
-// Compound indexes for better query performance
-userSchema.index({ email: 1, isEmailVerified: 1 });
 userSchema.index({ username: 1, status: 1 });
 userSchema.index({ createdAt: -1 });
 
 // Pre-save hook to hash password if modified
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 12);
+  try {
+    this.password = await bcrypt.hash(this.password, 12);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Instance methods
@@ -155,4 +157,43 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-export const User = mongoose.model('User', userSchema);
+userSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      username: this.username,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
+    },
+  );
+};
+
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+    },
+  );
+};
+
+userSchema.methods.generateTemporaryToken = function () {
+  const unHashToken = crypto.randomBytes(16).toString('hex');
+
+  const hashToken = crypto
+    .createHash('sha256')
+    .update(unHashToken)
+    .digest('hex');
+
+  const tokenExpiry = Date.now() + 20 * 60 * 1000; // 20 minutes
+  return { hashToken, unHashToken, tokenExpiry };
+};
+
+const User = mongoose.model('User', userSchema);
+export default User;
