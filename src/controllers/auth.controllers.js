@@ -1,8 +1,9 @@
-import User, { validateUserRegistration } from '../models/user.models.js';
+import User from '../models/user.models.js';
 import { ApiResponse } from '../utils/api-response.js';
 import { ApiError } from '../utils/api-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { sendVerifyEmail } from '../utils/mail.js';
+import { validateUserRegistration } from '../validators/user.validator.js';
 
 const generateAuthorizationTokens = async (userId) => {
   try {

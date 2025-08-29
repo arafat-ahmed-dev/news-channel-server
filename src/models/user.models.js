@@ -2,68 +2,6 @@ import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { z } from 'zod';
-
-// Zod validation schema
-export const userValidationSchema = z.object({
-  fullName: z
-    .string({
-      required_error: 'Full name is required',
-      invalid_type_error: 'Full name must be a string',
-    })
-    .trim()
-    .min(2, 'Full name must be at least 2 characters')
-    .max(100, 'Full name cannot exceed 100 characters')
-    .regex(/^[a-zA-Z\s]+$/, 'Full name can only contain letters and spaces'),
-
-  email: z
-    .string({
-      required_error: 'Email is required',
-      invalid_type_error: 'Email must be a string',
-    })
-    .trim()
-    .toLowerCase()
-    .email('Please provide a valid email address'),
-
-  username: z
-    .string({
-      required_error: 'Username is required',
-      invalid_type_error: 'Username must be a string',
-    })
-    .trim()
-    .min(3, 'Username must be at least 3 characters')
-    .max(30, 'Username cannot exceed 30 characters')
-    .regex(
-      /^[a-zA-Z0-9_]+$/,
-      'Username can only contain letters, numbers, and underscores',
-    ),
-
-  password: z
-    .string({
-      required_error: 'Password is required',
-      invalid_type_error: 'Password must be a string',
-    })
-    .min(8, 'Password must be at least 8 characters'),
-
-  avatar: z.string().url('Avatar must be a valid URL').optional(),
-
-  status: z.enum(['active', 'inactive', 'suspended']).default('active'),
-
-  isEmailVerified: z.boolean().default(false),
-});
-
-// Registration schema (subset of user schema)
-export const registrationSchema = userValidationSchema.pick({
-  fullName: true,
-  email: true,
-  username: true,
-  password: true,
-});
-
-// Helper function to validate user registration data
-export const validateUserRegistration = (userData) => {
-  return registrationSchema.safeParse(userData);
-};
 
 const userSchema = new Schema(
   {
