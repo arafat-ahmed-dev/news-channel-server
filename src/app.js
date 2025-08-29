@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 const app = express();
 import healthcheckRoutes from './routes/healthcheck.routes.js';
+import authRoutes from './routes/auth.routes.js';
 
 // Basic Configuration
 app.use(express.json({ limit: '16kb' })); //To get the request body in json format and limit the size of the request body
@@ -23,7 +24,7 @@ app.use(cors(corsOptions)); //To use the cors middleware
 
 //Routes
 app.use('/api/v1/healthcheck', healthcheckRoutes); // Health check route
-
+app.use('/api/v1/auth', authRoutes); // Auth routes
 app.get('/', (req, res) => {
   res.send('Hello, World! :)');
 });

@@ -42,24 +42,6 @@ const createTransporter = () => {
   }
 };
 
-// Generate a cryptographically secure 6-digit OTP
-const generateOTP = () => {
-  try {
-    const crypto = require('crypto');
-    let otp;
-    do {
-      const randomBytes = crypto.randomBytes(4);
-      otp = (randomBytes.readUInt32BE(0) % 900000) + 100000;
-    } while (otp < 100000 || otp > 999999);
-
-    return otp.toString();
-  } catch (error) {
-    // Fallback to Math.random if crypto fails
-    console.warn('Crypto OTP generation failed, using Math.random fallback');
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  }
-};
-
 // Generic email sender with retry logic
 const sendEmailWithRetry = async (transporter, mailOptions, maxRetries = 3) => {
   let lastError;
@@ -87,13 +69,16 @@ const sendEmailWithRetry = async (transporter, mailOptions, maxRetries = 3) => {
   throw lastError;
 };
 
-// Send OTP email with proper validation and error handling
-const sendOTPEmail = async (email, otp) => {
+// Send verification email with proper validation and error handling
+const sendVerifyEmail = async (email, verificationUrl, userName) => {
   try {
     // Validate inputs
     emailSchema.parse(email);
-    if (!otp || otp.length !== 6) {
-      throw new Error('Invalid OTP format');
+    if (!verificationUrl || verificationUrl.trim().length === 0) {
+      throw new Error('Verification URL is required');
+    }
+    if (!userName || userName.trim().length === 0) {
+      throw new Error('User name is required');
     }
 
     const transporter = createTransporter();
@@ -107,18 +92,21 @@ const sendOTPEmail = async (email, otp) => {
       throw new Error('Failed to connect to email server');
     }
 
+    const sanitizedName = userName.trim();
+    const sanitizedUrl = verificationUrl.trim();
+
     const mailOptions = {
       from: `"PMS - Project Management System" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: 'Your PMS Verification Code',
-      text: `Your verification code is: ${otp}. This code will expire in 10 minutes.`,
-      html: generateOTPEmailHTML(otp),
+      subject: 'Verify Your PMS Account',
+      text: `Hello ${sanitizedName},\n\nPlease verify your email address by clicking the following link:\n${sanitizedUrl}\n\nThis link will expire in 24 hours.\n\nBest regards,\nThe PMS Team`,
+      html: generateVerificationEmailHTML(sanitizedName, sanitizedUrl),
     };
 
     const result = await sendEmailWithRetry(transporter, mailOptions);
     return { success: true, messageId: result.messageId };
   } catch (error) {
-    console.error('Error sending OTP email:', error.message);
+    console.error('Error sending verification email:', error.message);
     throw new Error(`Failed to send verification email: ${error.message}`);
   }
 };
@@ -185,22 +173,38 @@ const sendPasswordResetEmail = async (email, resetToken, userName) => {
 };
 
 // HTML email templates
-const generateOTPEmailHTML = (otp) => `
+const generateVerificationEmailHTML = (name, verificationUrl) => `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
     <div style="text-align: center; margin-bottom: 30px;">
       <h1 style="color: #2563eb; margin: 0;">PMS</h1>
       <p style="color: #6b7280; margin: 5px 0;">Project Management System</p>
     </div>
-    <div style="background-color: #f8fafc; padding: 30px; border-radius: 8px; margin-bottom: 20px;">
-      <h2 style="color: #1f2937; margin-top: 0; margin-bottom: 15px;">Your Verification Code</h2>
-      <p style="color: #4b5563; margin-bottom: 20px;">Please use the following code to verify your account:</p>
-      <div style="font-size: 36px; letter-spacing: 8px; font-weight: bold; text-align: center; padding: 20px; background-color: #ffffff; border: 2px solid #e5e7eb; border-radius: 8px; margin: 20px 0; color: #1f2937;">
-        ${otp}
+    <div style="background-color: #f0f9ff; padding: 30px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #2563eb;">
+      <h2 style="color: #1e40af; margin-top: 0; margin-bottom: 15px;">✉️ Verify Your Email Address</h2>
+      <p style="color: #4b5563; font-size: 16px;">Hello ${name},</p>
+      <p style="color: #4b5563;">Thank you for signing up for PMS - Project Management System! To complete your registration and start using our platform, please verify your email address by clicking the button below:</p>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${verificationUrl}" 
+           style="background-color: #2563eb; color: white; padding: 14px 30px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block; font-size: 16px;">
+          Verify My Email
+        </a>
       </div>
-      <p style="color: #6b7280; font-size: 14px; text-align: center;">This code will expire in 10 minutes.</p>
+      <div style="background-color: #ffffff; padding: 20px; border-radius: 6px; margin: 20px 0;">
+        <p style="color: #374151; margin: 0; font-size: 14px; line-height: 1.5;">
+          <strong>⏰ Important:</strong> This verification link will expire in <strong>24 hours</strong> for security reasons.
+        </p>
+      </div>
+      <p style="color: #4b5563; font-size: 14px;">If the button above doesn't work, you can copy and paste this link into your browser:</p>
+      <p style="background-color: #f3f4f6; padding: 10px; border-radius: 4px; word-break: break-all; font-family: monospace; font-size: 12px; color: #374151;">${verificationUrl}</p>
+    </div>
+    <div style="background-color: #fef2f2; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ef4444;">
+      <h3 style="color: #dc2626; margin-top: 0; margin-bottom: 10px; font-size: 16px;">🚨 Security Notice</h3>
+      <p style="color: #4b5563; margin: 0; font-size: 14px;">
+        If you did not create an account with us, please ignore this email. No account has been created and no further action is required.
+      </p>
     </div>
     <div style="text-align: center; color: #9ca3af; font-size: 12px;">
-      <p>If you didn't request this code, you can safely ignore this email.</p>
+      <p>Need help? Contact our support team at support@pms.com</p>
       <p>© ${new Date().getFullYear()} PMS - Project Management System. All rights reserved.</p>
     </div>
   </div>
@@ -281,10 +285,9 @@ const checkEmailHealth = async () => {
 };
 
 export {
-    createTransporter,
-    generateOTP,
-    sendOTPEmail,
-    sendWelcomeEmail,
-    sendPasswordResetEmail,
-    checkEmailHealth
-}
+  createTransporter,
+  sendVerifyEmail,
+  sendWelcomeEmail,
+  sendPasswordResetEmail,
+  checkEmailHealth,
+};
