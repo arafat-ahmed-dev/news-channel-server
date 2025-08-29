@@ -52,7 +52,7 @@ const userSchema = new Schema(
         'https://img.icons8.com/?size=200&id=98957&format=png&color=000000',
       validate: {
         validator: function (url) {
-          return !url || validator.isURL(url);
+          return validator.isURL(url);
         },
         message: 'Avatar must be a valid URL',
       },
@@ -95,7 +95,7 @@ const userSchema = new Schema(
       default: null,
       validate: {
         validator: function (date) {
-          return !date || date > new Date();
+          return !date || (date instanceof Date && date > new Date());
         },
         message: 'Password reset expiry must be in the future',
       },
@@ -196,4 +196,5 @@ userSchema.methods.generateTemporaryToken = function () {
 };
 
 const User = mongoose.model('User', userSchema);
+
 export default User;
