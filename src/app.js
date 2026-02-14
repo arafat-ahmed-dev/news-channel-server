@@ -1,8 +1,21 @@
 import express from 'express';
 import cors from 'cors';
+import morgan from 'morgan';
 const app = express();
+
 import healthcheckRoutes from './routes/healthcheck.routes.js';
 import authRoutes from './routes/auth.routes.js';
+import newsRoutes from './routes/news.routes.js';
+import categoryRoutes from './routes/category.routes.js';
+import horoscopeRoutes from './routes/horoscope.routes.js';
+import commentRoutes from './routes/comment.routes.js';
+import reactionRoutes from './routes/reaction.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
+import pollRoutes from './routes/poll.routes.js';
+import readingHistoryRoutes from './routes/readinghistory.routes.js';
+
+// Morgan for logging HTTP requests (media control/monitoring)
+app.use(morgan('dev'));
 
 // Basic Configuration
 app.use(express.json({ limit: '16kb' })); //To get the request body in json format and limit the size of the request body
@@ -25,6 +38,14 @@ app.use(cors(corsOptions)); //To use the cors middleware
 //Routes
 app.use('/api/v1/healthcheck', healthcheckRoutes); // Health check route
 app.use('/api/v1/auth', authRoutes); // Auth routes
+app.use('/api/v1/news', newsRoutes);
+app.use('/api/v1/categories', categoryRoutes);
+app.use('/api/v1/horoscopes', horoscopeRoutes);
+app.use('/api/v1/comments', commentRoutes);
+app.use('/api/v1/reactions', reactionRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1/polls', pollRoutes);
+app.use('/api/v1/reading-history', readingHistoryRoutes);
 app.get('/', (req, res) => {
   res.send('Hello, World! :)');
 });
@@ -32,5 +53,9 @@ app.get('/', (req, res) => {
 app.get('/about', (req, res) => {
   res.send('About page');
 });
+
+// Error handler middleware (should be last)
+import errorHandler from './middlewares/errorHandler.js';
+app.use(errorHandler);
 
 export default app;
