@@ -25,7 +25,7 @@ app.use(morgan('dev'));
 // Basic Configuration
 app.use(express.json({ limit: '16kb' })); //To get the request body in json format and limit the size of the request body
 app.use(express.urlencoded({ extended: true, limit: '16kb' })); //To get the request body in urlencoded format and limit the size of the request body
-app.use(express.static('public')); //To serve static files from the public directory
+app.use(express.static('private')); //To serve static files from the public directory
 
 // CORS - Cross-Origin Resource Sharing
 const corsOptions = {
@@ -39,7 +39,6 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'], //To allow the request to be sent with the headers Content-Type and Authorization
 };
 app.use(cors(corsOptions)); //To use the cors middleware
-
 //Routes
 app.use('/api/v1/healthcheck', healthcheckRoutes); // Health check route
 app.use('/api/v1/auth', authRoutes); // Auth routes
