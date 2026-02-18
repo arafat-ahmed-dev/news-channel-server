@@ -20,6 +20,35 @@ export const getCommentsByArticle = async (req, res, next) => {
   }
 };
 
+export const updateCommentStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const comment = await Comment.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true },
+    );
+
+    if (!comment) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Comment not found' });
+    }
+
+    res
+      .status(200)
+      .json({
+        success: true,
+        data: comment,
+        message: 'Comment status updated successfully',
+      });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const deleteComment = async (req, res, next) => {
   try {
     const { id } = req.params;

@@ -4,6 +4,8 @@ import validateRequest from '../middlewares/validateRequest.js';
 import {
   createPoll,
   getAllPolls,
+  getPollById,
+  updatePoll,
   votePoll,
   deletePoll,
 } from '../controllers/poll.controllers.js';
@@ -23,6 +25,22 @@ router.post(
   createPoll,
 );
 router.get('/', getAllPolls);
+router.get(
+  '/:pollId',
+  [
+    param('pollId').notEmpty().withMessage('Poll ID is required'),
+    validateRequest,
+  ],
+  getPollById,
+);
+router.put(
+  '/:pollId',
+  [
+    param('pollId').notEmpty().withMessage('Poll ID is required'),
+    validateRequest,
+  ],
+  updatePoll,
+);
 router.post(
   '/vote',
   [

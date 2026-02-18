@@ -18,13 +18,6 @@ const userSchema = new Schema(
       lowercase: true,
       index: true,
     },
-    username: {
-      type: String,
-      required: [true, 'Username is required'],
-      trim: true,
-      unique: true,
-      index: true,
-    },
     avatar: {
       type: String,
       default:
@@ -47,11 +40,7 @@ const userSchema = new Schema(
       },
       default: 'active',
     },
-    isEmailVerified: {
-      type: Boolean,
-      default: false,
-      index: true,
-    },
+    // isEmailVerified removed
     refreshToken: {
       type: String,
       default: null,
@@ -66,15 +55,7 @@ const userSchema = new Schema(
       type: Date,
       default: null,
     },
-    emailVerificationToken: {
-      type: String,
-      default: null,
-      select: false,
-    },
-    emailVerificationExpiry: {
-      type: Date,
-      default: null,
-    },
+    // emailVerificationToken and emailVerificationExpiry removed
   },
   {
     timestamps: true,
@@ -84,9 +65,8 @@ const userSchema = new Schema(
         delete ret.password;
         delete ret.refreshToken;
         delete ret.forgetPasswordToken;
-        delete ret.emailVerificationToken;
         delete ret.forgetPasswordExpiry;
-        delete ret.emailVerificationExpiry;
+        // emailVerificationToken and emailVerificationExpiry removed
         return ret;
       },
     },
@@ -95,10 +75,8 @@ const userSchema = new Schema(
 );
 
 // Compound indexes for better query performance
-userSchema.index({ email: 1, isEmailVerified: 1 });
-userSchema.index({ email: 1, username: 1 });
-
-userSchema.index({ username: 1, status: 1 });
+userSchema.index({ email: 1 });
+userSchema.index({ email: 1 });
 userSchema.index({ createdAt: -1 });
 
 // Pre-save hook to hash password if modified
@@ -122,7 +100,7 @@ userSchema.methods.generateAccessToken = function () {
     {
       _id: this._id,
       email: this.email,
-      username: this.username,
+      // username removed
     },
     process.env.ACCESS_TOKEN_SECRET,
     {

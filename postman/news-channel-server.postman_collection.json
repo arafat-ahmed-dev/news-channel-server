@@ -1,0 +1,938 @@
+{
+  "info": {
+    "name": "News Channel Server",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Healthcheck",
+      "item": [
+        {
+          "name": "GET Healthcheck",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/healthcheck",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "healthcheck"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n \"password\": \"Admin1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "News",
+      "item": [
+        {
+          "name": "POST Create News",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Sample News Title",
+                  "type": "text"
+                },
+                { "key": "excerpt", "value": "Short excerpt", "type": "text" },
+                { "key": "category", "value": "Politics", "type": "text" },
+                { "key": "categorySlug", "value": "politics", "type": "text" },
+                { "key": "author", "value": "Admin", "type": "text" },
+                { "key": "date", "value": "2026-02-14", "type": "text" },
+                { "key": "slug", "value": "sample-news-title", "type": "text" },
+                { "key": "image", "type": "file" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/news",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "news"]
+            }
+          }
+        },
+        {
+          "name": "GET All News",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/news",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "news"]
+            }
+          }
+        },
+        {
+          "name": "GET News By Slug",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/news/:slug",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "news", ":slug"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update News",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Title\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/news/:slug",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "news", ":slug"]
+            }
+          }
+        },
+        {
+          "name": "DELETE News",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/news/:slug",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "news", ":slug"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "POST Create Category",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Politics\",\n  \"nameEn\": \"Politics\",\n  \"slug\": \"politics\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "categories"]
+            }
+          }
+        },
+        {
+          "name": "GET All Categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "categories"]
+            }
+          }
+        },
+        {
+          "name": "GET Category By Slug",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories/:slug",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "categories", ":slug"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Politics\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories/:slug",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "categories", ":slug"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Category",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories/:slug",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "categories", ":slug"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Horoscopes",
+      "item": [
+        {
+          "name": "POST Create Horoscope Sign",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Aries\",\n  \"nameEn\": \"Aries\",\n  \"slug\": \"aries\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/horoscopes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "horoscopes"]
+            }
+          }
+        },
+        {
+          "name": "GET All Horoscopes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/horoscopes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "horoscopes"]
+            }
+          }
+        },
+        {
+          "name": "GET Horoscope By Slug",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/horoscopes/:slug",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "horoscopes", ":slug"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Horoscope",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Aries\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/horoscopes/:slug",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "horoscopes", ":slug"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Horoscope",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/horoscopes/:slug",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "horoscopes", ":slug"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "POST Create Comment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"articleId\": \"article123\",\n  \"author\": \"Admin\",\n  \"content\": \"Nice article\",\n  \"timestamp\": \"2026-02-14T12:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "comments"]
+            }
+          }
+        },
+        {
+          "name": "GET Comments By Article",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/comments/article/:articleId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "comments", "article", ":articleId"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Comment",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/comments/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "comments", ":id"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reactions",
+      "item": [
+        {
+          "name": "POST Create Reaction",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"articleId\": \"article123\",\n  \"type\": \"like\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "reactions"]
+            }
+          }
+        },
+        {
+          "name": "GET Reactions By Article",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reactions/article/:articleId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "reactions", "article", ":articleId"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Reaction",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"articleId\": \"article123\",\n  \"userId\": \"user123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "reactions"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "POST Create Notification",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"New Alert\",\n  \"message\": \"Something happened\",\n  \"timestamp\": \"2026-02-14T12:00:00Z\",\n  \"type\": \"info\",\n  \"userId\": \"user123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "notifications"]
+            }
+          }
+        },
+        {
+          "name": "GET Notifications By User",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/user/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "notifications", "user", ":userId"]
+            }
+          }
+        },
+        {
+          "name": "PATCH Mark Notification Read",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/:id/read",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "notifications", ":id", "read"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Notification",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "notifications", ":id"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Polls",
+      "item": [
+        {
+          "name": "POST Create Poll",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pollId\": \"poll123\",\n  \"question\": \"Do you like this?\",\n  \"options\": [\"Yes\", \"No\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/polls",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "polls"]
+            }
+          }
+        },
+        {
+          "name": "GET All Polls",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/polls",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "polls"]
+            }
+          }
+        },
+        {
+          "name": "POST Vote Poll",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pollId\": \"poll123\",\n  \"userId\": \"user123\",\n  \"optionIndex\": 0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/polls/vote",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "polls", "vote"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Poll",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/polls/:pollId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "polls", ":pollId"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "GET Analytics By Range",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analytics?range=week",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analytics"],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "week"
+                }
+              ]
+            },
+            "description": "Get analytics data by time range (today|week|month|year). Returns nested structure with overview, audience, content, and realtime data."
+          }
+        },
+        {
+          "name": "GET Latest Analytics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analytics/latest",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analytics", "latest"]
+            },
+            "description": "Get the latest analytics document from database"
+          }
+        },
+        {
+          "name": "GET Analytics By Date Range",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analytics/range?startDate=2026-02-01&endDate=2026-02-28",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analytics", "range"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2026-02-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2026-02-28"
+                }
+              ]
+            },
+            "description": "Get analytics data between specific dates"
+          }
+        },
+        {
+          "name": "POST Create Analytics",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pageViews\": 1250,\n  \"uniqueUsers\": 450,\n  \"sessions\": 500,\n  \"bounceRate\": 35.5,\n  \"avgSessionDuration\": 180,\n  \"topCountries\": [\n    { \"country\": \"Bangladesh\", \"users\": 200, \"percentage\": 44.4 },\n    { \"country\": \"USA\", \"users\": 150, \"percentage\": 33.3 }\n  ],\n  \"topDevices\": [\n    { \"device\": \"Mobile\", \"users\": 300, \"percentage\": 66.7 },\n    { \"device\": \"Desktop\", \"users\": 150, \"percentage\": 33.3 }\n  ],\n  \"topArticles\": [\n    { \"title\": \"Breaking News\", \"views\": 500, \"avgTime\": 120 },\n    { \"title\": \"Update\", \"views\": 300, \"avgTime\": 90 }\n  ],\n  \"topCategories\": [\n    { \"category\": \"Politics\", \"views\": 600 },\n    { \"category\": \"Sports\", \"views\": 400 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analytics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analytics"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Analytics",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pageViews\": 1500\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analytics/:analyticsId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analytics", ":analyticsId"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Analytics",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analytics/:analyticsId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analytics", ":analyticsId"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "GET All Users",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"]
+            }
+          }
+        },
+        {
+          "name": "GET User By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", ":userId"]
+            }
+          }
+        },
+        {
+          "name": "POST Create User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"role\": \"editor\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update User",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Jane Doe\",\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", ":userId"]
+            }
+          }
+        },
+        {
+          "name": "DELETE User",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", ":userId"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ads",
+      "item": [
+        {
+          "name": "GET All Ads",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ads",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "ads"]
+            }
+          }
+        },
+        {
+          "name": "GET Ad By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ads/:adId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "ads", ":adId"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Ad",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Product Ad\",\n  \"type\": \"banner\",\n  \"placement\": \"header\",\n  \"status\": \"active\",\n  \"impressions\": 0,\n  \"clicks\": 0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ads",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "ads"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Ad",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"paused\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ads/:adId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "ads", ":adId"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Ad",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ads/:adId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "ads", ":adId"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Media",
+      "item": [
+        {
+          "name": "GET All Media",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/media",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "media"]
+            }
+          }
+        },
+        {
+          "name": "GET Media By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/media/:mediaId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "media", ":mediaId"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Media",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"article-image.jpg\",\n  \"type\": \"image\",\n  \"size\": 245000,\n  \"url\": \"https://cdn.example.com/images/article-image.jpg\",\n  \"usage\": 0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/media",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "media"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Media",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usage\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/media/:mediaId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "media", ":mediaId"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Media",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/media/:mediaId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "media", ":mediaId"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {
+          "name": "GET Settings",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "settings"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Settings",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"siteInfo\": {\n    \"siteName\": \"Bangla Hunt\",\n    \"siteDescription\": \"Latest news from Bangladesh\",\n    \"siteLogo\": \"https://example.com/logo.png\",\n    \"siteUrl\": \"https://banglahunt.com\",\n    \"contactEmail\": \"info@banglahunt.com\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "settings"]
+            }
+          }
+        },
+        {
+          "name": "POST Reset Settings",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/settings/reset",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "settings", "reset"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments - Admin",
+      "item": [
+        {
+          "name": "GET All Comments",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "comments"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Comment Status",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/comments/:id/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "comments", ":id", "status"]
+            },
+            "description": "Update comment status to 'approved', 'pending', or 'spam'"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Polls - Admin",
+      "item": [
+        {
+          "name": "GET Poll By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/polls/:pollId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "polls", ":pollId"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Poll",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Updated question?\",\n  \"options\": [\"Updated Option 1\", \"Updated Option 2\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/polls/:pollId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "polls", ":pollId"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reading History",
+      "item": [
+        {
+          "name": "POST Add Reading History",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user123\",\n  \"slug\": \"sample-news-title\",\n  \"title\": \"Sample News Title\",\n  \"category\": \"Politics\",\n  \"timestamp\": \"2026-02-14T12:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reading-history",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "reading-history"]
+            }
+          }
+        },
+        {
+          "name": "GET Reading History By User",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reading-history/user/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "reading-history", "user", ":userId"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Reading History",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reading-history/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "reading-history", ":id"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

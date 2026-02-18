@@ -4,6 +4,7 @@ import validateRequest from '../middlewares/validateRequest.js';
 import {
   createComment,
   getCommentsByArticle,
+  updateCommentStatus,
   deleteComment,
 } from '../controllers/comment.controllers.js';
 
@@ -21,6 +22,15 @@ router.post(
   createComment,
 );
 router.get('/article/:articleId', getCommentsByArticle);
+router.put(
+  '/:id/status',
+  [
+    param('id').notEmpty().withMessage('Comment ID is required'),
+    body('status').notEmpty().withMessage('Status is required'),
+    validateRequest,
+  ],
+  updateCommentStatus,
+);
 router.delete(
   '/:id',
   [

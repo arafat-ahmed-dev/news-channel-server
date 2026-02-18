@@ -13,6 +13,11 @@ import reactionRoutes from './routes/reaction.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 import pollRoutes from './routes/poll.routes.js';
 import readingHistoryRoutes from './routes/readinghistory.routes.js';
+import usersRoutes from './routes/users.routes.js';
+import adsRoutes from './routes/ads.routes.js';
+import mediaRoutes from './routes/media.routes.js';
+import analyticsRoutes from './routes/analytics.routes.js';
+import settingsRoutes from './routes/settings.routes.js';
 
 // Morgan for logging HTTP requests (media control/monitoring)
 app.use(morgan('dev'));
@@ -46,6 +51,11 @@ app.use('/api/v1/reactions', reactionRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/polls', pollRoutes);
 app.use('/api/v1/reading-history', readingHistoryRoutes);
+app.use('/api/v1/users', usersRoutes);
+app.use('/api/v1/ads', adsRoutes);
+app.use('/api/v1/media', mediaRoutes);
+app.use('/api/v1/analytics', analyticsRoutes);
+app.use('/api/v1/settings', settingsRoutes);
 app.get('/', (req, res) => {
   res.send('Hello, World! :)');
 });

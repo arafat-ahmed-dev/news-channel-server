@@ -21,18 +21,7 @@ export const userValidationSchema = z.object({
     .toLowerCase()
     .email('Please provide a valid email address'),
 
-  username: z
-    .string({
-      required_error: 'Username is required',
-      invalid_type_error: 'Username must be a string',
-    })
-    .trim()
-    .min(3, 'Username must be at least 3 characters')
-    .max(30, 'Username cannot exceed 30 characters')
-    .regex(
-      /^[a-zA-Z0-9_]+$/,
-      'Username can only contain letters, numbers, and underscores',
-    ),
+  // username removed
 
   password: z
     .string({
@@ -52,19 +41,18 @@ export const userValidationSchema = z.object({
 export const registrationSchema = userValidationSchema.pick({
   fullName: true,
   email: true,
-  username: true,
   password: true,
 });
 
 // Login schema
 export const loginSchema = z.object({
-  emailOrUsername: z
+  email: z
     .string({
-      required_error: 'Email or username is required',
-      invalid_type_error: 'Email or username must be a string',
+      required_error: 'Email is required',
+      invalid_type_error: 'Email must be a string',
     })
     .trim()
-    .min(1, 'Email or username cannot be empty'),
+    .min(1, 'Email cannot be empty'),
 
   password: z
     .string({
@@ -97,14 +85,7 @@ export const passwordChangeSchema = z.object({
     .min(8, 'New password must be at least 8 characters'),
 });
 
-// Email verification schema
-export const emailVerificationSchema = z.object({
-  token: z
-    .string({
-      required_error: 'Verification token is required',
-    })
-    .min(1, 'Token cannot be empty'),
-});
+// Email verification schema removed
 
 // Forgot password schema
 export const forgotPasswordSchema = z.object({
@@ -150,10 +131,7 @@ export const validatePasswordChange = (userData) => {
   return passwordChangeSchema.safeParse(userData);
 };
 
-// Helper function to validate email verification data
-export const validateEmailVerification = (userData) => {
-  return emailVerificationSchema.safeParse(userData);
-};
+// validateEmailVerification removed
 
 // Helper function to validate forgot password data
 export const validateForgotPassword = (userData) => {

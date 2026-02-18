@@ -69,47 +69,7 @@ const sendEmailWithRetry = async (transporter, mailOptions, maxRetries = 3) => {
   throw lastError;
 };
 
-// Send verification email with proper validation and error handling
-const sendVerifyEmail = async (email, verificationUrl, userName) => {
-  try {
-    // Validate inputs
-    emailSchema.parse(email);
-    if (!verificationUrl || verificationUrl.trim().length === 0) {
-      throw new Error('Verification URL is required');
-    }
-    if (!userName || userName.trim().length === 0) {
-      throw new Error('User name is required');
-    }
-
-    const transporter = createTransporter();
-
-    // Verify SMTP connection
-    try {
-      await transporter.verify();
-      console.log('SMTP connection verified successfully');
-    } catch (error) {
-      console.error('SMTP connection verification failed:', error.message);
-      throw new Error('Failed to connect to email server');
-    }
-
-    const sanitizedName = userName.trim();
-    const sanitizedUrl = verificationUrl.trim();
-
-    const mailOptions = {
-      from: `"PMS - Project Management System" <${process.env.SMTP_USER}>`,
-      to: email,
-      subject: 'Verify Your PMS Account',
-      text: `Hello ${sanitizedName},\n\nPlease verify your email address by clicking the following link:\n${sanitizedUrl}\n\nThis link will expire in 24 hours.\n\nBest regards,\nThe PMS Team`,
-      html: generateVerificationEmailHTML(sanitizedName, sanitizedUrl),
-    };
-
-    const result = await sendEmailWithRetry(transporter, mailOptions);
-    return { success: true, messageId: result.messageId };
-  } catch (error) {
-    console.error('Error sending verification email:', error.message);
-    throw new Error(`Failed to send verification email: ${error.message}`);
-  }
-};
+// sendVerifyEmail removed
 
 // Send welcome email with proper error handling
 const sendWelcomeEmail = async (email, name) => {
@@ -141,19 +101,15 @@ const sendWelcomeEmail = async (email, name) => {
 };
 
 // Send password reset email with proper validation and error handling
-const sendPasswordResetEmail = async (email, resetToken, userName) => {
+const sendPasswordResetEmail = async (email, resetToken) => {
   try {
     // Validate inputs
     emailSchema.parse(email);
     if (!resetToken || resetToken.trim().length === 0) {
       throw new Error('Reset token is required');
     }
-    if (!userName || userName.trim().length === 0) {
-      throw new Error('User name is required');
-    }
 
     const transporter = createTransporter();
-    const sanitizedName = userName.trim();
     const resetUrl = `${process.env.FRONTEND_URL || process.env.CLIENT_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
 
     const mailOptions = {
@@ -173,42 +129,7 @@ const sendPasswordResetEmail = async (email, resetToken, userName) => {
 };
 
 // HTML email templates
-const generateVerificationEmailHTML = (name, verificationUrl) => `
-  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-    <div style="text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2563eb; margin: 0;">PMS</h1>
-      <p style="color: #6b7280; margin: 5px 0;">Project Management System</p>
-    </div>
-    <div style="background-color: #f0f9ff; padding: 30px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #2563eb;">
-      <h2 style="color: #1e40af; margin-top: 0; margin-bottom: 15px;">✉️ Verify Your Email Address</h2>
-      <p style="color: #4b5563; font-size: 16px;">Hello ${name},</p>
-      <p style="color: #4b5563;">Thank you for signing up for PMS - Project Management System! To complete your registration and start using our platform, please verify your email address by clicking the button below:</p>
-      <div style="text-align: center; margin: 30px 0;">
-        <a href="${verificationUrl}" 
-           style="background-color: #2563eb; color: white; padding: 14px 30px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block; font-size: 16px;">
-          Verify My Email
-        </a>
-      </div>
-      <div style="background-color: #ffffff; padding: 20px; border-radius: 6px; margin: 20px 0;">
-        <p style="color: #374151; margin: 0; font-size: 14px; line-height: 1.5;">
-          <strong>⏰ Important:</strong> This verification link will expire in <strong>24 hours</strong> for security reasons.
-        </p>
-      </div>
-      <p style="color: #4b5563; font-size: 14px;">If the button above doesn't work, you can copy and paste this link into your browser:</p>
-      <p style="background-color: #f3f4f6; padding: 10px; border-radius: 4px; word-break: break-all; font-family: monospace; font-size: 12px; color: #374151;">${verificationUrl}</p>
-    </div>
-    <div style="background-color: #fef2f2; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ef4444;">
-      <h3 style="color: #dc2626; margin-top: 0; margin-bottom: 10px; font-size: 16px;">🚨 Security Notice</h3>
-      <p style="color: #4b5563; margin: 0; font-size: 14px;">
-        If you did not create an account with us, please ignore this email. No account has been created and no further action is required.
-      </p>
-    </div>
-    <div style="text-align: center; color: #9ca3af; font-size: 12px;">
-      <p>Need help? Contact our support team at support@pms.com</p>
-      <p>© ${new Date().getFullYear()} PMS - Project Management System. All rights reserved.</p>
-    </div>
-  </div>
-`;
+// ...existing code...
 
 const generateWelcomeEmailHTML = (name) => `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
@@ -286,7 +207,6 @@ const checkEmailHealth = async () => {
 
 export {
   createTransporter,
-  sendVerifyEmail,
   sendWelcomeEmail,
   sendPasswordResetEmail,
   checkEmailHealth,
