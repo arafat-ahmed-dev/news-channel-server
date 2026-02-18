@@ -1,12 +1,18 @@
 {
   "info": {
     "name": "News Channel Server",
+    "description": "Complete API collection for the News Channel Server. Base URL: http://localhost:3001/api/v1",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:3000"
+      "value": "http://localhost:3001"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "description": "JWT token from POST /auth/login response. Set this after logging in."
     }
   ],
   "item": [
@@ -36,13 +42,30 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fullName\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n \"password\": \"Admin1234\"\n}"
+              "raw": "{\n  \"fullName\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"Admin1234\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/register",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "auth", "register"]
             }
+          }
+        },
+        {
+          "name": "POST Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Admin1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Returns accessToken and refreshToken. Store in {{adminToken}} variable."
           }
         }
       ]
@@ -62,13 +85,44 @@
                   "value": "Sample News Title",
                   "type": "text"
                 },
-                { "key": "excerpt", "value": "Short excerpt", "type": "text" },
+                {
+                  "key": "excerpt",
+                  "value": "Short excerpt of the article.",
+                  "type": "text"
+                },
+                {
+                  "key": "content",
+                  "value": "<p>Full article content here.</p>",
+                  "type": "text"
+                },
                 { "key": "category", "value": "Politics", "type": "text" },
                 { "key": "categorySlug", "value": "politics", "type": "text" },
                 { "key": "author", "value": "Admin", "type": "text" },
-                { "key": "date", "value": "2026-02-14", "type": "text" },
+                { "key": "date", "value": "2026-02-18", "type": "text" },
                 { "key": "slug", "value": "sample-news-title", "type": "text" },
-                { "key": "image", "type": "file" }
+                {
+                  "key": "status",
+                  "value": "published",
+                  "type": "text",
+                  "description": "draft | published"
+                },
+                {
+                  "key": "featured",
+                  "value": "false",
+                  "type": "text",
+                  "description": "true | false"
+                },
+                {
+                  "key": "tags",
+                  "value": "politics,bangladesh",
+                  "type": "text",
+                  "description": "comma-separated tags"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "description": "Optional image upload"
+                }
               ]
             },
             "url": {
@@ -107,7 +161,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Updated Title\"\n}"
+              "raw": "{\n  \"title\": \"Updated Title\",\n  \"status\": \"published\",\n  \"featured\": true,\n  \"tags\": [\"politics\", \"update\"]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/news/:slug",
@@ -139,7 +193,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Politics\",\n  \"nameEn\": \"Politics\",\n  \"slug\": \"politics\"\n}"
+              "raw": "{\n  \"name\": \"রাজনীতি\",\n  \"nameEn\": \"Politics\",\n  \"slug\": \"politics\",\n  \"description\": \"National and international political news\",\n  \"color\": \"#3b82f6\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/categories",
@@ -171,30 +225,61 @@
           }
         },
         {
-          "name": "PUT Update Category",
+          "name": "PUT Update Category By ID",
           "request": {
             "method": "PUT",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Updated Politics\"\n}"
+              "raw": "{\n  \"name\": \"আপডেটেড রাজনীতি\",\n  \"nameEn\": \"Updated Politics\",\n  \"description\": \"Updated description\",\n  \"color\": \"#ef4444\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories/id/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "categories", "id", ":id"]
+            },
+            "description": "Update category by MongoDB _id (used by admin frontend)"
+          }
+        },
+        {
+          "name": "DELETE Category By ID",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories/id/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "categories", "id", ":id"]
+            },
+            "description": "Delete category by MongoDB _id (used by admin frontend)"
+          }
+        },
+        {
+          "name": "PUT Update Category By Slug",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"আপডেটেড রাজনীতি\",\n  \"nameEn\": \"Updated Politics\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/categories/:slug",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "categories", ":slug"]
-            }
+            },
+            "description": "Update category by slug"
           }
         },
         {
-          "name": "DELETE Category",
+          "name": "DELETE Category By Slug",
           "request": {
             "method": "DELETE",
             "url": {
               "raw": "{{baseUrl}}/api/v1/categories/:slug",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "categories", ":slug"]
-            }
+            },
+            "description": "Delete category by slug"
           }
         }
       ]
@@ -424,13 +509,14 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"pollId\": \"poll123\",\n  \"question\": \"Do you like this?\",\n  \"options\": [\"Yes\", \"No\"]\n}"
+              "raw": "{\n  \"question\": \"আপনার কি এই সংবাদটি পছন্দ হয়েছে?\",\n  \"options\": [\n    { \"text\": \"হ্যাঁ\", \"votes\": 0 },\n    { \"text\": \"না\", \"votes\": 0 },\n    { \"text\": \"নিরপেক্ষ\", \"votes\": 0 }\n  ],\n  \"status\": \"active\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/polls",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "polls"]
-            }
+            },
+            "description": "pollId is auto-generated if not provided. Options must be array of {text, votes} objects with at least 2 items."
           }
         },
         {
@@ -442,6 +528,35 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "polls"]
             }
+          }
+        },
+        {
+          "name": "GET Poll By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/polls/:pollId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "polls", ":pollId"]
+            },
+            "description": "Accepts MongoDB _id or pollId string"
+          }
+        },
+        {
+          "name": "PUT Update Poll",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Updated question?\",\n  \"options\": [\n    { \"text\": \"Updated Option 1\", \"votes\": 0 },\n    { \"text\": \"Updated Option 2\", \"votes\": 0 }\n  ],\n  \"status\": \"closed\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/polls/:pollId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "polls", ":pollId"]
+            },
+            "description": "Accepts MongoDB _id or pollId string"
           }
         },
         {
@@ -468,7 +583,8 @@
               "raw": "{{baseUrl}}/api/v1/polls/:pollId",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "polls", ":pollId"]
-            }
+            },
+            "description": "Accepts MongoDB _id or pollId string"
           }
         }
       ]
@@ -675,13 +791,14 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Product Ad\",\n  \"type\": \"banner\",\n  \"placement\": \"header\",\n  \"status\": \"active\",\n  \"impressions\": 0,\n  \"clicks\": 0\n}"
+              "raw": "{\n  \"title\": \"Product Ad\",\n  \"type\": \"banner\",\n  \"placement\": \"header\",\n  \"status\": \"active\",\n  \"impressions\": 0,\n  \"clicks\": 0,\n  \"startDate\": \"2026-02-18\",\n  \"endDate\": \"2026-03-18\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/ads",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "ads"]
-            }
+            },
+            "description": "Required: title, type, placement, startDate, endDate"
           }
         },
         {
@@ -855,38 +972,6 @@
               "path": ["api", "v1", "comments", ":id", "status"]
             },
             "description": "Update comment status to 'approved', 'pending', or 'spam'"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Polls - Admin",
-      "item": [
-        {
-          "name": "GET Poll By ID",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/polls/:pollId",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "polls", ":pollId"]
-            }
-          }
-        },
-        {
-          "name": "PUT Update Poll",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"question\": \"Updated question?\",\n  \"options\": [\"Updated Option 1\", \"Updated Option 2\"]\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/polls/:pollId",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "polls", ":pollId"]
-            }
           }
         }
       ]

@@ -45,10 +45,36 @@ export const updateCategory = async (req, res, next) => {
   }
 };
 
+export const updateCategoryById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const category = await Category.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    if (!category)
+      return res.status(404).json({ success: false, message: 'Not found' });
+    res.status(200).json({ success: true, data: category });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const deleteCategory = async (req, res, next) => {
   try {
     const { slug } = req.params;
     const category = await Category.findOneAndDelete({ slug });
+    if (!category)
+      return res.status(404).json({ success: false, message: 'Not found' });
+    res.status(200).json({ success: true, message: 'Deleted' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteCategoryById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const category = await Category.findByIdAndDelete(id);
     if (!category)
       return res.status(404).json({ success: false, message: 'Not found' });
     res.status(200).json({ success: true, message: 'Deleted' });

@@ -4,23 +4,36 @@ import fs from 'fs';
 
 // Create a news article
 export const createNews = async (req, res, next) => {
+  let uploadedFilePath;
+  let uploadedToCloud = false;
   try {
     let imageUrl = req.body.image;
     // If file uploaded, upload to Cloudinary
     if (req.file) {
+      uploadedFilePath = req.file.path;
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'news-images',
         resource_type: 'image',
       });
       imageUrl = result.secure_url;
-      // Remove local file after upload
-      fs.unlinkSync(req.file.path);
+      uploadedToCloud = true;
     }
+    
     const news = new NewsArticle({ ...req.body, image: imageUrl });
     await news.save();
     res.status(201).json({ success: true, data: news });
   } catch (err) {
     next(err);
+  } finally {
+    if (uploadedToCloud && uploadedFilePath) {
+      try {
+        await fs.promises.unlink(uploadedFilePath);
+      } catch (error) {
+        if (error.code !== 'ENOENT') {
+          console.error('Failed to remove local upload:', error);
+        }
+      }
+    }
   }
 };
 

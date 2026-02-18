@@ -6,7 +6,9 @@ import {
   getAllCategories,
   getCategoryBySlug,
   updateCategory,
+  updateCategoryById,
   deleteCategory,
+  deleteCategoryById,
 } from '../controllers/category.controllers.js';
 
 const router = express.Router();
@@ -23,6 +25,17 @@ router.post(
 );
 router.get('/', getAllCategories);
 router.get('/:slug', getCategoryBySlug);
+router.put(
+  '/id/:id',
+  [
+    body('name').optional().notEmpty(),
+    body('nameEn').optional().notEmpty(),
+    body('slug').optional().notEmpty(),
+    validateRequest,
+  ],
+  updateCategoryById,
+);
+router.delete('/id/:id', deleteCategoryById);
 router.put(
   '/:slug',
   [

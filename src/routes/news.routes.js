@@ -23,6 +23,12 @@ router.post(
     body('author').notEmpty().withMessage('Author is required'),
     body('date').notEmpty().withMessage('Date is required'),
     body('slug').notEmpty().withMessage('Slug is required'),
+    body('status').optional().isIn(['draft', 'published']),
+    body('tags').optional().customSanitizer(value => {
+      if (typeof value === 'string') return value.split(',').map(t => t.trim()).filter(Boolean);
+      return value;
+    }).isArray(),
+    body('featured').optional().isBoolean(),
     validateRequest,
   ],
   createNews,

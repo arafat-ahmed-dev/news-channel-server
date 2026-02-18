@@ -15,7 +15,6 @@ const router = express.Router();
 router.post(
   '/',
   [
-    body('pollId').notEmpty().withMessage('Poll ID is required'),
     body('question').notEmpty().withMessage('Question is required'),
     body('options')
       .isArray({ min: 2 })

@@ -1,21 +1,19 @@
 import { Router } from 'express';
 import {
-  getAllAnalytics,
-  getAnalyticsByDateRange,
-  getLatestAnalytics,
-  createAnalytics,
-  updateAnalytics,
-  deleteAnalytics,
-} from '../controllers/analytics.controllers.js';
+  getAllMedia,
+  getMediaById,
+  createMedia,
+  updateMedia,
+  deleteMedia,
+} from '../controllers/media.controllers.js';
 
 const router = Router();
 
 // Public routes
-router.get('/', getAllAnalytics);
-router.get('/latest', getLatestAnalytics);
-router.get('/range', getAnalyticsByDateRange);
-router.post('/', createAnalytics);
-router.put('/:analyticsId', updateAnalytics);
-router.delete('/:analyticsId', deleteAnalytics);
+router.get('/', getAllMedia);
+router.get('/:mediaId', getMediaById);
+router.post('/', createMedia);
+router.put('/:mediaId', updateMedia);
+router.delete('/:mediaId', deleteMedia);
 
 export default router;

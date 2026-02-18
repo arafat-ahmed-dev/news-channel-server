@@ -1,17 +1,16 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import app from './app.js';
 import connectToDatabase from './database/index.js';
-dotenv.config({ path: '.env' });
 
 const PORT = process.env.PORT || 3000;
 
 connectToDatabase()
-.then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Error starting server: MongoDB Connection', error);
+    process.exit(1);
   });
-})
-.catch((error) => {
-  console.error("Error starting server: MongoDB Connection", error);
-  process.exit(1);
-});

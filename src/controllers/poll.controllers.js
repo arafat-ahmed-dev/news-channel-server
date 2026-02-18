@@ -34,10 +34,10 @@ export const getPollById = async (req, res, next) => {
 export const updatePoll = async (req, res, next) => {
   try {
     const { pollId } = req.params;
-    const { question, options } = req.body;
+    const { question, options, status } = req.body;
 
     let poll = await Poll.findById(pollId);
-    if (!poll && pollId) {
+    if (!poll) {
       poll = await Poll.findOne({ pollId });
     }
 
@@ -49,15 +49,14 @@ export const updatePoll = async (req, res, next) => {
 
     if (question) poll.question = question;
     if (options) poll.options = options;
+    if (status) poll.status = status;
 
     await poll.save();
-    res
-      .status(200)
-      .json({
-        success: true,
-        data: poll,
-        message: 'Poll updated successfully',
-      });
+    res.status(200).json({
+      success: true,
+      data: poll,
+      message: 'Poll updated successfully',
+    });
   } catch (err) {
     next(err);
   }
