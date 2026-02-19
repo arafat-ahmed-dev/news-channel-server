@@ -1,4 +1,5 @@
 import Category from '../models/category.models.js';
+import NewsArticle from '../models/news.models.js';
 
 export const createCategory = async (req, res, next) => {
   try {
@@ -12,8 +13,31 @@ export const createCategory = async (req, res, next) => {
 
 export const getAllCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find();
-    res.status(200).json({ success: true, data: categories });
+    const categories = await Category.find().lean();
+
+    // Build count maps for both categorySlug and category name
+    // (news may have been created with English slug OR Bengali category name)
+    const countsBySlug = await NewsArticle.aggregate([
+      { $group: { _id: '$categorySlug', count: { $sum: 1 } } },
+    ]);
+    const countsByName = await NewsArticle.aggregate([
+      { $group: { _id: '$category', count: { $sum: 1 } } },
+    ]);
+
+    const slugMap = Object.fromEntries(
+      countsBySlug.filter((c) => c._id).map((c) => [c._id, c.count]),
+    );
+    const nameMap = Object.fromEntries(
+      countsByName.filter((c) => c._id).map((c) => [c._id, c.count]),
+    );
+
+    const categoriesWithCount = categories.map((cat) => ({
+      ...cat,
+      // Prefer slug match; fall back to name match for legacy articles
+      count: slugMap[cat.slug] || nameMap[cat.name] || 0,
+    }));
+
+    res.status(200).json({ success: true, data: categoriesWithCount });
   } catch (err) {
     next(err);
   }

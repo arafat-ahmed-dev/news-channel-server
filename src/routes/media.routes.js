@@ -1,7 +1,9 @@
 import { Router } from 'express';
+import upload from '../middlewares/uploadImage.js';
 import {
   getAllMedia,
   getMediaById,
+  uploadMediaFile,
   createMedia,
   updateMedia,
   deleteMedia,
@@ -9,10 +11,9 @@ import {
 
 const router = Router();
 
-// Public routes
 router.get('/', getAllMedia);
 router.get('/:mediaId', getMediaById);
-router.post('/', createMedia);
+router.post('/', upload.single('file'), uploadMediaFile);
 router.put('/:mediaId', updateMedia);
 router.delete('/:mediaId', deleteMedia);
 

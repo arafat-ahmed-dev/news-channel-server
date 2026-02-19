@@ -1,14 +1,82 @@
 import Media from '../models/media.models.js';
+import NewsArticle from '../models/news.models.js';
 import { ApiError } from '../utils/api-error.js';
 import { ApiResponse } from '../utils/api-response.js';
 import { asyncHandler } from '../utils/async-handler.js';
+import cloudinary from '../utils/cloudinary.js';
+import fs from 'fs';
 
-// Get all media
+// Upload a file to Cloudinary and save to Media library
+const uploadMediaFile = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    throw new ApiError(400, 'No file provided');
+  }
+
+  let cloudResult;
+  try {
+    cloudResult = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'media-library',
+      resource_type: 'auto',
+    });
+  } finally {
+    // Remove temp file regardless
+    fs.promises.unlink(req.file.path).catch(() => {});
+  }
+
+  const type =
+    cloudResult.resource_type === 'video'
+      ? 'video'
+      : cloudResult.resource_type === 'raw'
+        ? 'audio'
+        : 'image';
+
+  const media = await Media.create({
+    name: req.file.originalname || req.file.filename,
+    type,
+    size: req.file.size || cloudResult.bytes || 0,
+    url: cloudResult.secure_url,
+    usage: 0,
+  });
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, media, 'Media uploaded successfully'));
+});
+
+// Get all media — merges Media library + all news article images
 const getAllMedia = asyncHandler(async (req, res) => {
-  const media = await Media.find();
+  // 1. Get saved Media records
+  const savedMedia = await Media.find().lean();
+  const savedUrls = new Set(savedMedia.map((m) => m.url));
+
+  // 2. Get all news articles that have an image
+  const articles = await NewsArticle.find(
+    { image: { $exists: true, $ne: '' } },
+    'title slug image createdAt',
+  ).lean();
+
+  // 3. Build virtual media entries for news images not already in the library
+  const newsMediaEntries = articles
+    .filter((a) => a.image && !savedUrls.has(a.image))
+    .map((a) => ({
+      _id: `news-${a._id}`, // virtual ID — not a real Media doc
+      name: a.title || a.slug || 'news-image',
+      type: 'image',
+      size: 0,
+      url: a.image,
+      usage: 1, // used in this article
+      createdAt: a.createdAt,
+      source: 'news', // hint for frontend
+    }));
+
+  // 4. Merge: saved Media first (newest first), then news images
+  const all = [...savedMedia, ...newsMediaEntries].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+  );
+
   return res
     .status(200)
-    .json(new ApiResponse(200, media, 'Media fetched successfully'));
+    .json(new ApiResponse(200, all, 'Media fetched successfully'));
 });
 
 // Get media by ID
@@ -86,4 +154,11 @@ const deleteMedia = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, media, 'Media deleted successfully'));
 });
 
-export { getAllMedia, getMediaById, createMedia, updateMedia, deleteMedia };
+export {
+  getAllMedia,
+  getMediaById,
+  uploadMediaFile,
+  createMedia,
+  updateMedia,
+  deleteMedia,
+};

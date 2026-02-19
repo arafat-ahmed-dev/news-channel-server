@@ -1,6 +1,22 @@
 import NewsArticle from '../models/news.models.js';
+import Media from '../models/media.models.js';
 import cloudinary from '../utils/cloudinary.js';
 import fs from 'fs';
+
+// Helper: save an entry to the Media library after a Cloudinary upload
+async function saveToMediaLibrary(file, url) {
+  try {
+    await Media.create({
+      name: file.originalname || file.filename,
+      type: 'image',
+      size: file.size || 0,
+      url,
+      usage: 0,
+    });
+  } catch {
+    // Non-fatal — don't block the main operation
+  }
+}
 
 // Create a news article
 export const createNews = async (req, res, next) => {
@@ -17,6 +33,7 @@ export const createNews = async (req, res, next) => {
       });
       imageUrl = result.secure_url;
       uploadedToCloud = true;
+      saveToMediaLibrary(req.file, imageUrl); // fire-and-forget
     }
 
     const news = new NewsArticle({ ...req.body, image: imageUrl });
@@ -78,6 +95,7 @@ export const updateNews = async (req, res, next) => {
       });
       updateData.image = result.secure_url;
       uploadedToCloud = true;
+      saveToMediaLibrary(req.file, result.secure_url); // fire-and-forget
     }
 
     const news = await NewsArticle.findOneAndUpdate({ slug }, updateData, {
