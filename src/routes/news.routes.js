@@ -24,10 +24,17 @@ router.post(
     body('date').notEmpty().withMessage('Date is required'),
     body('slug').notEmpty().withMessage('Slug is required'),
     body('status').optional().isIn(['draft', 'published']),
-    body('tags').optional().customSanitizer(value => {
-      if (typeof value === 'string') return value.split(',').map(t => t.trim()).filter(Boolean);
-      return value;
-    }).isArray(),
+    body('tags')
+      .optional()
+      .customSanitizer((value) => {
+        if (typeof value === 'string')
+          return value
+            .split(',')
+            .map((t) => t.trim())
+            .filter(Boolean);
+        return value;
+      })
+      .isArray(),
     body('featured').optional().isBoolean(),
     validateRequest,
   ],
@@ -37,6 +44,7 @@ router.get('/', getAllNews);
 router.get('/:slug', getNewsBySlug);
 router.put(
   '/:slug',
+  upload.single('image'),
   [
     body('title').optional().notEmpty(),
     body('excerpt').optional().notEmpty(),
@@ -45,6 +53,26 @@ router.put(
     body('author').optional().notEmpty(),
     body('date').optional().notEmpty(),
     body('slug').optional().notEmpty(),
+    body('status').optional().isIn(['draft', 'published', 'scheduled']),
+    body('tags')
+      .optional()
+      .customSanitizer((value) => {
+        if (typeof value === 'string')
+          return value
+            .split(',')
+            .map((t) => t.trim())
+            .filter(Boolean);
+        return value;
+      })
+      .isArray(),
+    body('featured')
+      .optional()
+      .customSanitizer((value) => {
+        if (value === 'true') return true;
+        if (value === 'false') return false;
+        return value;
+      })
+      .isBoolean(),
     validateRequest,
   ],
   updateNews,

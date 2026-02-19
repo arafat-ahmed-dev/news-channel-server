@@ -22,6 +22,9 @@ import settingsRoutes from './routes/settings.routes.js';
 // Morgan for logging HTTP requests (media control/monitoring)
 app.use(morgan('dev'));
 
+// Disable ETags to prevent 304 stale cache responses after updates
+app.set('etag', false);
+
 // Basic Configuration
 app.use(express.json({ limit: '16kb' })); //To get the request body in json format and limit the size of the request body
 app.use(express.urlencoded({ extended: true, limit: '16kb' })); //To get the request body in urlencoded format and limit the size of the request body
