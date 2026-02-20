@@ -1,5 +1,31 @@
 import Comment from '../models/comment.models.js';
 
+export const getAllComments = async (req, res, next) => {
+  try {
+    const { status, page = 1, limit = 50 } = req.query;
+    const query = {};
+    if (status && status !== 'all') query.status = status;
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const [comments, total] = await Promise.all([
+      Comment.find(query)
+        .populate('articleId', 'title slug')
+        .sort({ _id: -1 })
+        .skip(skip)
+        .limit(parseInt(limit)),
+      Comment.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: comments,
+      pagination: { total, page: parseInt(page), limit: parseInt(limit) },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const createComment = async (req, res, next) => {
   try {
     const comment = new Comment(req.body);
@@ -37,13 +63,11 @@ export const updateCommentStatus = async (req, res, next) => {
         .json({ success: false, message: 'Comment not found' });
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        data: comment,
-        message: 'Comment status updated successfully',
-      });
+    res.status(200).json({
+      success: true,
+      data: comment,
+      message: 'Comment status updated successfully',
+    });
   } catch (err) {
     next(err);
   }

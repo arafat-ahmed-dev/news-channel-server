@@ -3,6 +3,7 @@ import { body, param } from 'express-validator';
 import validateRequest from '../middlewares/validateRequest.js';
 import {
   createComment,
+  getAllComments,
   getCommentsByArticle,
   updateCommentStatus,
   deleteComment,
@@ -10,6 +11,7 @@ import {
 
 const router = express.Router();
 
+router.get('/', getAllComments);
 router.post(
   '/',
   [

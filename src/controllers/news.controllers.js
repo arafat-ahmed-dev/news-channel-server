@@ -57,8 +57,49 @@ export const createNews = async (req, res, next) => {
 // Get all news articles
 export const getAllNews = async (req, res, next) => {
   try {
-    const news = await NewsArticle.find();
-    res.status(200).json({ success: true, data: news });
+    const {
+      category,
+      featured,
+      trending,
+      status = 'published',
+      limit = 50,
+      page = 1,
+      search,
+      exclude,
+    } = req.query;
+
+    const filter = {};
+
+    // Only filter by status if explicitly provided or default to published
+    if (status) filter.status = status;
+    if (category) filter.categorySlug = category;
+    if (featured === 'true') filter.featured = true;
+    if (trending === 'true') filter.trending = true;
+    if (search)
+      filter.$or = [
+        { title: new RegExp(search, 'i') },
+        { excerpt: new RegExp(search, 'i') },
+      ];
+    if (exclude) filter.slug = { $ne: exclude };
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const news = await NewsArticle.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await NewsArticle.countDocuments(filter);
+
+    res.status(200).json({
+      success: true,
+      data: news,
+      pagination: {
+        total,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        pages: Math.ceil(total / parseInt(limit)),
+      },
+    });
   } catch (err) {
     next(err);
   }

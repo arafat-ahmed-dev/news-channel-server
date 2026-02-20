@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "seed:news": "node scripts/seedNews.js",
+    "seed:polls-comments": "node scripts/seedPollsComments.js",
+    "seed:analytics": "node scripts/seedAnalytics.js"
   },
   "author": "Arafat Ahmed",
   "license": "ISC",
