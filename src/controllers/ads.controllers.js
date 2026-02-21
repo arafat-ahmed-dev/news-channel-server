@@ -5,7 +5,7 @@ import { asyncHandler } from '../utils/async-handler.js';
 
 // Get all ads
 const getAllAds = asyncHandler(async (req, res) => {
-  const ads = await Ads.find();
+  const ads = await Ads.find().lean();
   return res
     .status(200)
     .json(new ApiResponse(200, ads, 'Ads fetched successfully'));
@@ -14,7 +14,7 @@ const getAllAds = asyncHandler(async (req, res) => {
 // Get ad by ID
 const getAdById = asyncHandler(async (req, res) => {
   const { adId } = req.params;
-  const ad = await Ads.findById(adId);
+  const ad = await Ads.findById(adId).lean();
 
   if (!ad) {
     throw new ApiError(404, 'Ad not found');

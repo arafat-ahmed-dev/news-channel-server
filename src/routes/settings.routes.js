@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requireAdmin } from '../middlewares/auth.middleware.js';
 import {
   getSettings,
   updateSettings,
@@ -7,9 +8,11 @@ import {
 
 const router = Router();
 
-// Public routes
+// Public routes (read-only)
 router.get('/', getSettings);
-router.put('/', updateSettings);
-router.post('/reset', resetSettings);
+
+// Protected routes (admin only)
+router.put('/', ...requireAdmin, updateSettings);
+router.post('/reset', ...requireAdmin, resetSettings);
 
 export default router;

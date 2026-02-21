@@ -5,7 +5,7 @@ import { asyncHandler } from '../utils/async-handler.js';
 
 // Get all analytics
 const getAllAnalytics = asyncHandler(async (req, res) => {
-  const analytics = await Analytics.find().sort({ date: -1 });
+  const analytics = await Analytics.find().sort({ date: -1 }).lean();
   return res
     .status(200)
     .json(new ApiResponse(200, analytics, 'Analytics fetched successfully'));
@@ -24,7 +24,9 @@ const getAnalyticsByDateRange = asyncHandler(async (req, res) => {
       $gte: new Date(startDate),
       $lte: new Date(endDate),
     },
-  }).sort({ date: -1 });
+  })
+    .sort({ date: -1 })
+    .lean();
 
   return res
     .status(200)
@@ -33,7 +35,7 @@ const getAnalyticsByDateRange = asyncHandler(async (req, res) => {
 
 // Get latest analytics
 const getLatestAnalytics = asyncHandler(async (req, res) => {
-  const analytics = await Analytics.findOne().sort({ date: -1 });
+  const analytics = await Analytics.findOne().sort({ date: -1 }).lean();
 
   if (!analytics) {
     throw new ApiError(404, 'No analytics data found');
@@ -76,7 +78,9 @@ const getAnalyticsByRange = asyncHandler(async (req, res) => {
 
   const analytics = await Analytics.find({
     date: { $gte: startDate },
-  }).sort({ date: -1 });
+  })
+    .sort({ date: -1 })
+    .lean();
 
   if (!analytics || analytics.length === 0) {
     // Return default structure if no data

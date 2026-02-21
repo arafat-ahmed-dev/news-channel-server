@@ -1,6 +1,7 @@
 import express from 'express';
 import { body, param } from 'express-validator';
 import validateRequest from '../middlewares/validateRequest.js';
+import { requireAdmin } from '../middlewares/auth.middleware.js';
 import {
   createComment,
   getAllComments,
@@ -26,6 +27,7 @@ router.post(
 router.get('/article/:articleId', getCommentsByArticle);
 router.put(
   '/:id/status',
+  ...requireAdmin,
   [
     param('id').notEmpty().withMessage('Comment ID is required'),
     body('status').notEmpty().withMessage('Status is required'),
@@ -35,6 +37,7 @@ router.put(
 );
 router.delete(
   '/:id',
+  ...requireAdmin,
   [
     param('id').notEmpty().withMessage('Comment ID is required'),
     validateRequest,

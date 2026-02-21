@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import upload from '../middlewares/uploadImage.js';
+import { requireAdmin } from '../middlewares/auth.middleware.js';
 import {
   getAllMedia,
   getMediaById,
@@ -11,10 +12,13 @@ import {
 
 const router = Router();
 
+// Public routes (read-only)
 router.get('/', getAllMedia);
 router.get('/:mediaId', getMediaById);
-router.post('/', upload.single('file'), uploadMediaFile);
-router.put('/:mediaId', updateMedia);
-router.delete('/:mediaId', deleteMedia);
+
+// Protected routes (admin only)
+router.post('/', ...requireAdmin, upload.single('file'), uploadMediaFile);
+router.put('/:mediaId', ...requireAdmin, updateMedia);
+router.delete('/:mediaId', ...requireAdmin, deleteMedia);
 
 export default router;

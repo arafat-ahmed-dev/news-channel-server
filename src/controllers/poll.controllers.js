@@ -12,7 +12,7 @@ export const createPoll = async (req, res, next) => {
 
 export const getAllPolls = async (req, res, next) => {
   try {
-    const polls = await Poll.find();
+    const polls = await Poll.find().sort({ createdAt: -1 }).lean();
     res.status(200).json({ success: true, data: polls });
   } catch (err) {
     next(err);
@@ -22,7 +22,7 @@ export const getAllPolls = async (req, res, next) => {
 export const getPollById = async (req, res, next) => {
   try {
     const { pollId } = req.params;
-    const poll = await Poll.findOne({ pollId });
+    const poll = await Poll.findOne({ pollId }).lean();
     if (!poll)
       return res.status(404).json({ success: false, message: 'Not found' });
     res.status(200).json({ success: true, data: poll });

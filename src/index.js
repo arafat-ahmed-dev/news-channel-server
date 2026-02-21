@@ -1,6 +1,10 @@
 import 'dotenv/config';
+import { validateEnv } from './utils/validateEnv.js';
 import app from './app.js';
 import connectToDatabase from './database/index.js';
+
+// Validate env vars before anything else
+validateEnv();
 
 const PORT = process.env.PORT || 3000;
 

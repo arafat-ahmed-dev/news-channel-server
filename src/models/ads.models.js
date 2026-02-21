@@ -29,11 +29,11 @@ const AdsSchema = new mongoose.Schema(
       default: 0,
     },
     startDate: {
-      type: String,
+      type: Date,
       required: [true, 'Start date is required'],
     },
     endDate: {
-      type: String,
+      type: Date,
       required: [true, 'End date is required'],
     },
   },
@@ -41,5 +41,8 @@ const AdsSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+AdsSchema.index({ status: 1, placement: 1 });
+AdsSchema.index({ startDate: 1, endDate: 1 });
 
 export default mongoose.model('Ads', AdsSchema);

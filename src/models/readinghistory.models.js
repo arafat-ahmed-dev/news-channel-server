@@ -8,4 +8,7 @@ const ReadingHistorySchema = new mongoose.Schema({
   timestamp: { type: Number, required: true },
 });
 
+ReadingHistorySchema.index({ userId: 1, timestamp: -1 });
+ReadingHistorySchema.index({ userId: 1, slug: 1 }, { unique: true });
+
 export default mongoose.model('ReadingHistory', ReadingHistorySchema);

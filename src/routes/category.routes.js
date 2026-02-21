@@ -1,6 +1,7 @@
 import express from 'express';
 import { body } from 'express-validator';
 import validateRequest from '../middlewares/validateRequest.js';
+import { requireAdmin } from '../middlewares/auth.middleware.js';
 import {
   createCategory,
   getAllCategories,
@@ -15,6 +16,7 @@ const router = express.Router();
 
 router.post(
   '/',
+  ...requireAdmin,
   [
     body('name').notEmpty().withMessage('Name is required'),
     body('nameEn').notEmpty().withMessage('English name is required'),
@@ -27,6 +29,7 @@ router.get('/', getAllCategories);
 router.get('/:slug', getCategoryBySlug);
 router.put(
   '/id/:id',
+  ...requireAdmin,
   [
     body('name').optional().notEmpty(),
     body('nameEn').optional().notEmpty(),
@@ -35,9 +38,10 @@ router.put(
   ],
   updateCategoryById,
 );
-router.delete('/id/:id', deleteCategoryById);
+router.delete('/id/:id', ...requireAdmin, deleteCategoryById);
 router.put(
   '/:slug',
+  ...requireAdmin,
   [
     body('name').optional().notEmpty(),
     body('nameEn').optional().notEmpty(),
@@ -46,6 +50,6 @@ router.put(
   ],
   updateCategory,
 );
-router.delete('/:slug', deleteCategory);
+router.delete('/:slug', ...requireAdmin, deleteCategory);
 
 export default router;

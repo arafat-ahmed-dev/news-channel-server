@@ -2,6 +2,7 @@ import express from 'express';
 import { body } from 'express-validator';
 import validateRequest from '../middlewares/validateRequest.js';
 import upload from '../middlewares/uploadImage.js';
+import { requireEditor } from '../middlewares/auth.middleware.js';
 import {
   createNews,
   getAllNews,
@@ -14,6 +15,7 @@ const router = express.Router();
 
 router.post(
   '/',
+  ...requireEditor,
   upload.single('image'),
   [
     body('title').notEmpty().withMessage('Title is required'),
@@ -44,6 +46,7 @@ router.get('/', getAllNews);
 router.get('/:slug', getNewsBySlug);
 router.put(
   '/:slug',
+  ...requireEditor,
   upload.single('image'),
   [
     body('title').optional().notEmpty(),
@@ -77,6 +80,6 @@ router.put(
   ],
   updateNews,
 );
-router.delete('/:slug', deleteNews);
+router.delete('/:slug', ...requireEditor, deleteNews);
 
 export default router;

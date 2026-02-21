@@ -1,6 +1,7 @@
 import express from 'express';
 import { body, param } from 'express-validator';
 import validateRequest from '../middlewares/validateRequest.js';
+import { verifyToken, requireAdmin } from '../middlewares/auth.middleware.js';
 import {
   createNotification,
   getNotificationsByUser,
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.post(
   '/',
+  ...requireAdmin,
   [
     body('title').notEmpty().withMessage('Title is required'),
     body('message').notEmpty().withMessage('Message is required'),
@@ -22,9 +24,10 @@ router.post(
   ],
   createNotification,
 );
-router.get('/user/:userId', getNotificationsByUser);
+router.get('/user/:userId', verifyToken, getNotificationsByUser);
 router.patch(
   '/:id/read',
+  verifyToken,
   [
     param('id').notEmpty().withMessage('Notification ID is required'),
     validateRequest,
@@ -33,6 +36,7 @@ router.patch(
 );
 router.delete(
   '/:id',
+  ...requireAdmin,
   [
     param('id').notEmpty().withMessage('Notification ID is required'),
     validateRequest,

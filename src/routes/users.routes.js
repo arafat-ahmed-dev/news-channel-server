@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requireAdmin } from '../middlewares/auth.middleware.js';
 import {
   getAllUsers,
   getUserById,
@@ -9,11 +10,11 @@ import {
 
 const router = Router();
 
-// Public routes
-router.get('/', getAllUsers);
-router.get('/:userId', getUserById);
-router.post('/', createUser);
-router.put('/:userId', updateUser);
-router.delete('/:userId', deleteUser);
+// All user management routes are admin-only
+router.get('/', ...requireAdmin, getAllUsers);
+router.get('/:userId', ...requireAdmin, getUserById);
+router.post('/', ...requireAdmin, createUser);
+router.put('/:userId', ...requireAdmin, updateUser);
+router.delete('/:userId', ...requireAdmin, deleteUser);
 
 export default router;

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requireAdmin } from '../middlewares/auth.middleware.js';
 import {
   getAllAds,
   getAdById,
@@ -9,11 +10,13 @@ import {
 
 const router = Router();
 
-// Public routes
+// Public routes (read-only)
 router.get('/', getAllAds);
 router.get('/:adId', getAdById);
-router.post('/', createAd);
-router.put('/:adId', updateAd);
-router.delete('/:adId', deleteAd);
+
+// Protected routes (admin only)
+router.post('/', ...requireAdmin, createAd);
+router.put('/:adId', ...requireAdmin, updateAd);
+router.delete('/:adId', ...requireAdmin, deleteAd);
 
 export default router;

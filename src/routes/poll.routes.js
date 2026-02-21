@@ -1,6 +1,7 @@
 import express from 'express';
 import { body, param } from 'express-validator';
 import validateRequest from '../middlewares/validateRequest.js';
+import { requireAdmin } from '../middlewares/auth.middleware.js';
 import {
   createPoll,
   getAllPolls,
@@ -14,6 +15,7 @@ const router = express.Router();
 
 router.post(
   '/',
+  ...requireAdmin,
   [
     body('question').notEmpty().withMessage('Question is required'),
     body('options')
@@ -34,6 +36,7 @@ router.get(
 );
 router.put(
   '/:pollId',
+  ...requireAdmin,
   [
     param('pollId').notEmpty().withMessage('Poll ID is required'),
     validateRequest,
@@ -52,6 +55,7 @@ router.post(
 );
 router.delete(
   '/:pollId',
+  ...requireAdmin,
   [
     param('pollId').notEmpty().withMessage('Poll ID is required'),
     validateRequest,

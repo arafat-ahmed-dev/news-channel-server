@@ -40,6 +40,14 @@ const userSchema = new Schema(
       },
       default: 'active',
     },
+    role: {
+      type: String,
+      enum: {
+        values: ['reader', 'editor', 'admin', 'superadmin'],
+        message: 'Role must be reader, editor, admin, or superadmin',
+      },
+      default: 'reader',
+    },
     // isEmailVerified removed
     refreshToken: {
       type: String,
@@ -74,10 +82,9 @@ const userSchema = new Schema(
   },
 );
 
-// Compound indexes for better query performance
-userSchema.index({ email: 1 });
-userSchema.index({ email: 1 });
+// Indexes for better query performance (email unique is already defined in schema)
 userSchema.index({ createdAt: -1 });
+userSchema.index({ role: 1 });
 
 // Pre-save hook to hash password if modified
 userSchema.pre('save', async function (next) {
@@ -100,7 +107,7 @@ userSchema.methods.generateAccessToken = function () {
     {
       _id: this._id,
       email: this.email,
-      // username removed
+      role: this.role,
     },
     process.env.ACCESS_TOKEN_SECRET,
     {

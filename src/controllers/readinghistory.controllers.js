@@ -13,7 +13,9 @@ export const addReadingHistory = async (req, res, next) => {
 export const getReadingHistoryByUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const history = await ReadingHistory.find({ userId });
+    const history = await ReadingHistory.find({ userId })
+      .sort({ timestamp: -1 })
+      .lean();
     res.status(200).json({ success: true, data: history });
   } catch (err) {
     next(err);

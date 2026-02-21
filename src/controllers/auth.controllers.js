@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import User from '../models/user.models.js';
 import { ApiResponse } from '../utils/api-response.js';
 import { ApiError } from '../utils/api-error.js';
@@ -32,7 +33,6 @@ const register = asyncHandler(async (req, res) => {
   }
 
   const { fullName, email, password } = req.body;
-  console.log(fullName, email, password);
 
   // Validate user data with Zod
   const validationResult = validateUserRegistration({
@@ -74,11 +74,15 @@ const register = asyncHandler(async (req, res) => {
   // Email verification sending removed
 
   res.status(201).json(
-    new ApiResponse(201, 'User registered successfully', {
-      user: newUser,
-      accessToken,
-      refreshToken,
-    }),
+    new ApiResponse(
+      201,
+      {
+        user: newUser,
+        accessToken,
+        refreshToken,
+      },
+      'User registered successfully',
+    ),
   );
 });
 
@@ -124,12 +128,68 @@ const login = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false });
 
   res.status(200).json(
-    new ApiResponse(200, 'User logged in successfully', {
-      user,
-      accessToken,
-      refreshToken,
-    }),
+    new ApiResponse(
+      200,
+      {
+        user,
+        accessToken,
+        refreshToken,
+      },
+      'User logged in successfully',
+    ),
   );
 });
 
-export { register, login };
+const refreshAccessToken = asyncHandler(async (req, res) => {
+  const { refreshToken: incomingRefreshToken } = req.body;
+
+  if (!incomingRefreshToken) {
+    throw new ApiError(400, 'Refresh token is required.');
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(
+      incomingRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+    );
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      throw new ApiError(401, 'Refresh token has expired. Please login again.');
+    }
+    throw new ApiError(401, 'Invalid refresh token.');
+  }
+
+  const user = await User.findById(decoded._id).select('+refreshToken');
+
+  if (!user) {
+    throw new ApiError(401, 'Invalid refresh token. User not found.');
+  }
+
+  if (user.refreshToken !== incomingRefreshToken) {
+    throw new ApiError(401, 'Refresh token has been revoked.');
+  }
+
+  if (user.status !== 'active') {
+    throw new ApiError(403, 'Account is not active.');
+  }
+
+  const { accessToken, refreshToken } = await generateAuthorizationTokens(
+    user._id,
+  );
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        accessToken,
+        refreshToken,
+      },
+      'Token refreshed successfully',
+    ),
+  );
+});
+
+export { register, login, refreshAccessToken };

@@ -14,4 +14,7 @@ const CategorySchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// slug index already created by unique:true on field
+CategorySchema.index({ status: 1, order: 1 });
+
 export default mongoose.model('Category', CategorySchema);

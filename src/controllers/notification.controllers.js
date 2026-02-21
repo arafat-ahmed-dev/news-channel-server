@@ -13,7 +13,9 @@ export const createNotification = async (req, res, next) => {
 export const getNotificationsByUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const notifications = await Notification.find({ userId });
+    const notifications = await Notification.find({ userId })
+      .sort({ timestamp: -1 })
+      .lean();
     res.status(200).json({ success: true, data: notifications });
   } catch (err) {
     next(err);

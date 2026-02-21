@@ -59,4 +59,6 @@ const AnalyticsSchema = new mongoose.Schema(
   },
 );
 
+AnalyticsSchema.index({ date: -1 });
+
 export default mongoose.model('Analytics', AnalyticsSchema);

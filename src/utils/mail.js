@@ -84,10 +84,10 @@ const sendWelcomeEmail = async (email, name) => {
     const sanitizedName = name.trim();
 
     const mailOptions = {
-      from: `"PMS - Project Management System" <${process.env.SMTP_USER}>`,
+      from: `"UTSHO News" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: 'Welcome to PMS - Project Management System',
-      text: `Hello ${sanitizedName},\n\nWelcome to PMS! Thank you for joining our project management platform.\n\nBest regards,\nThe PMS Team`,
+      subject: 'UTSHO News-এ স্বাগতম!',
+      text: `Hello ${sanitizedName},\n\nWelcome to UTSHO News! Thank you for joining our platform.\n\nBest regards,\nThe UTSHO News Team`,
       html: generateWelcomeEmailHTML(sanitizedName),
     };
 
@@ -101,7 +101,7 @@ const sendWelcomeEmail = async (email, name) => {
 };
 
 // Send password reset email with proper validation and error handling
-const sendPasswordResetEmail = async (email, resetToken) => {
+const sendPasswordResetEmail = async (email, resetToken, name = 'User') => {
   try {
     // Validate inputs
     emailSchema.parse(email);
@@ -110,13 +110,14 @@ const sendPasswordResetEmail = async (email, resetToken) => {
     }
 
     const transporter = createTransporter();
+    const sanitizedName = (name || 'User').trim();
     const resetUrl = `${process.env.FRONTEND_URL || process.env.CLIENT_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
 
     const mailOptions = {
-      from: `"PMS - Project Management System" <${process.env.SMTP_USER}>`,
+      from: `"UTSHO News" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: 'Password Reset Request - PMS',
-      text: `Hello ${sanitizedName},\n\nYou have requested to reset your password for PMS - Project Management System.\n\nPlease click the following link to reset your password:\n${resetUrl}\n\nThis link will expire in 1 hour.\n\nIf you did not request this password reset, please ignore this email.\n\nBest regards,\nThe PMS Team`,
+      subject: 'পাসওয়ার্ড রিসেট অনুরোধ - UTSHO News',
+      text: `Hello ${sanitizedName},\n\nYou have requested to reset your password for UTSHO News.\n\nPlease click the following link to reset your password:\n${resetUrl}\n\nThis link will expire in 1 hour.\n\nIf you did not request this password reset, please ignore this email.\n\nBest regards,\nThe UTSHO News Team`,
       html: generatePasswordResetEmailHTML(sanitizedName, resetUrl),
     };
 
@@ -134,24 +135,24 @@ const sendPasswordResetEmail = async (email, resetToken) => {
 const generateWelcomeEmailHTML = (name) => `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
     <div style="text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2563eb; margin: 0;">PMS</h1>
-      <p style="color: #6b7280; margin: 5px 0;">Project Management System</p>
+      <h1 style="color: #C0392B; margin: 0;">UTSHO News</h1>
+      <p style="color: #6b7280; margin: 5px 0;">খবর এখন হাতের মুঠোয়</p>
     </div>
     <div style="padding: 30px; border-radius: 8px; margin-bottom: 20px;">
-      <h2 style="color: #1f2937; margin-top: 0;">Welcome to PMS!</h2>
+      <h2 style="color: #1f2937; margin-top: 0;">UTSHO News-এ স্বাগতম!</h2>
       <p style="color: #4b5563; font-size: 16px;">Hello ${name},</p>
-      <p style="color: #4b5563;">Thank you for joining our project management platform. We're excited to help you organize and manage your projects efficiently.</p>
+      <p style="color: #4b5563;">Thank you for joining UTSHO News! We're excited to keep you informed with the latest news and stories.</p>
       <div style="text-align: center; margin: 30px 0;">
-        <a href="${process.env.FRONTEND_URL || process.env.NEXTAUTH_URL || '#'}/" 
-           style="background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">
-          Get Started
+        <a href="${process.env.FRONTEND_URL || '#'}/" 
+           style="background-color: #C0392B; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">
+          Visit UTSHO News
         </a>
       </div>
       <p style="color: #4b5563;">If you have any questions, feel free to contact our support team.</p>
-      <p style="color: #4b5563; margin-top: 20px;">Best regards,<br>The PMS Team</p>
+      <p style="color: #4b5563; margin-top: 20px;">Best regards,<br>The UTSHO News Team</p>
     </div>
     <div style="text-align: center; color: #9ca3af; font-size: 12px;">
-      <p>© ${new Date().getFullYear()} PMS - Project Management System. All rights reserved.</p>
+      <p>© ${new Date().getFullYear()} UTSHO News. All rights reserved.</p>
     </div>
   </div>
 `;
@@ -160,13 +161,13 @@ const generateWelcomeEmailHTML = (name) => `
 const generatePasswordResetEmailHTML = (name, resetUrl) => `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
     <div style="text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2563eb; margin: 0;">PMS</h1>
-      <p style="color: #6b7280; margin: 5px 0;">Project Management System</p>
+      <h1 style="color: #C0392B; margin: 0;">UTSHO News</h1>
+      <p style="color: #6b7280; margin: 5px 0;">খবর এখন হাতের মুঠোয়</p>
     </div>
     <div style="background-color: #fef3c7; padding: 30px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #f59e0b;">
       <h2 style="color: #92400e; margin-top: 0; margin-bottom: 15px;">🔐 Password Reset Request</h2>
       <p style="color: #4b5563; font-size: 16px;">Hello ${name},</p>
-      <p style="color: #4b5563;">We received a request to reset your password for your PMS account. If you made this request, please click the button below to reset your password:</p>
+      <p style="color: #4b5563;">We received a request to reset your password for your UTSHO News account. If you made this request, please click the button below to reset your password:</p>
       <div style="text-align: center; margin: 30px 0;">
         <a href="${resetUrl}" 
            style="background-color: #dc2626; color: white; padding: 14px 30px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block; font-size: 16px;">
@@ -188,8 +189,8 @@ const generatePasswordResetEmailHTML = (name, resetUrl) => `
       </p>
     </div>
     <div style="text-align: center; color: #9ca3af; font-size: 12px;">
-      <p>Need help? Contact our support team at support@pms.com</p>
-      <p>© ${new Date().getFullYear()} PMS - Project Management System. All rights reserved.</p>
+      <p>Need help? Contact our support team.</p>
+      <p>© ${new Date().getFullYear()} UTSHO News. All rights reserved.</p>
     </div>
   </div>
 `;

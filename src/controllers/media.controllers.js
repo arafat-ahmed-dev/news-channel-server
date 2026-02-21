@@ -82,7 +82,7 @@ const getAllMedia = asyncHandler(async (req, res) => {
 // Get media by ID
 const getMediaById = asyncHandler(async (req, res) => {
   const { mediaId } = req.params;
-  const media = await Media.findById(mediaId);
+  const media = await Media.findById(mediaId).lean();
 
   if (!media) {
     throw new ApiError(404, 'Media not found');

@@ -9,4 +9,7 @@ const NotificationSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 
+NotificationSchema.index({ userId: 1, read: 1 });
+NotificationSchema.index({ timestamp: -1 });
+
 export default mongoose.model('Notification', NotificationSchema);

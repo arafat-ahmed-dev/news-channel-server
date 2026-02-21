@@ -23,7 +23,7 @@ export const createReaction = async (req, res, next) => {
 export const getReactionsByArticle = async (req, res, next) => {
   try {
     const { articleId } = req.params;
-    const reactions = await Reaction.find({ articleId });
+    const reactions = await Reaction.find({ articleId }).lean();
     res.status(200).json({ success: true, data: reactions });
   } catch (err) {
     next(err);

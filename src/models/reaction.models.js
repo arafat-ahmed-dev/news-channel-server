@@ -14,4 +14,7 @@ const ReactionSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 
+ReactionSchema.index({ articleId: 1, type: 1 });
+ReactionSchema.index({ articleId: 1, userId: 1 }, { unique: true });
+
 export default mongoose.model('Reaction', ReactionSchema);

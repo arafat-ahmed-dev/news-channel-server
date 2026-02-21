@@ -29,4 +29,7 @@ const MediaSchema = new mongoose.Schema(
   },
 );
 
+MediaSchema.index({ type: 1 });
+MediaSchema.index({ createdAt: -1 });
+
 export default mongoose.model('Media', MediaSchema);

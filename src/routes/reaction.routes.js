@@ -1,6 +1,7 @@
 import express from 'express';
 import { body, param } from 'express-validator';
 import validateRequest from '../middlewares/validateRequest.js';
+import { verifyToken } from '../middlewares/auth.middleware.js';
 import {
   createReaction,
   getReactionsByArticle,
